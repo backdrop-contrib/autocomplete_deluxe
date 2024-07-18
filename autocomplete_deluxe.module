@@ -179,7 +179,7 @@ function autocomplete_deluxe_field_widget_settings_form($field, $instance) {
     '#type' => 'textfield',
     '#title' => t('Size of textfield'),
     '#default_value' => isset($settings['size']) ? $settings['size'] : 6,
-    '#element_validate' => array('_element_validate_integer_positive'),
+    '#element_validate' => array('element_validate_integer_positive'),
     '#required' => TRUE,
   );
   $form['limit'] = array(
@@ -187,14 +187,14 @@ function autocomplete_deluxe_field_widget_settings_form($field, $instance) {
     '#title' => t('Limit of the output.'),
     '#description' => t('If set to zero no limit will be used'),
     '#default_value' => isset($settings['limit']) ? $settings['limit'] : 10,
-    '#element_validate' => array('_element_validate_integer'),
+    '#element_validate' => array('element_validate_integer'),
   );
   $form['min_length'] = array(
     '#type' => 'textfield',
     '#title' => t('Minimum length.'),
     '#description' => t('The minimum length of characters to enter to open the suggestion list.'),
     '#default_value' => isset($settings['min_length']) ? $settings['min_length'] : 0,
-    '#element_validate' => array('_element_validate_integer'),
+    '#element_validate' => array('element_validate_integer'),
   );
   $form['delimiter'] = array(
     '#type' => 'textfield',

@@ -312,13 +312,9 @@ function autocomplete_deluxe_element_process($element) {
       array('system', 'ui.button'),
       array('system', 'ui.sortable'),
     ),
-    'js' => array(drupal_get_path('module', 'autocomplete_deluxe') . '/autocomplete_deluxe.js'),
-    'css' => array(drupal_get_path('module', 'autocomplete_deluxe') . '/autocomplete_deluxe.css'),
+    'js' => array(drupal_get_path('module', 'autocomplete_deluxe') . '/js/autocomplete_deluxe.js'),
+    'css' => array(drupal_get_path('module', 'autocomplete_deluxe') . '/css/autocomplete_deluxe.css'),
   );
-  // Workaround for problems with jquery css in seven theme.
-  if ($GLOBALS['theme'] == 'seven') {
-    $element['#attached']['css'][] = drupal_get_path('module', 'autocomplete_deluxe') . '/autocomplete_deluxe.seven.css';
-  }
 
   $html_id = drupal_html_id('autocomplete-deluxe-input');
 

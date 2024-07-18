@@ -5,17 +5,17 @@
  */
 
 (function($) {
-  Drupal.autocomplete_deluxe = Drupal.autocomplete_deluxe || {};
+  Backdrop.autocomplete_deluxe = Backdrop.autocomplete_deluxe || {};
 
-  Drupal.behaviors.autocomplete_deluxe = {
+  Backdrop.behaviors.autocomplete_deluxe = {
     attach: function(context) {
-      var autocomplete_settings = Drupal.settings.autocomplete_deluxe;
+      var autocomplete_settings = Backdrop.settings.autocomplete_deluxe;
 
       $('input.autocomplete-deluxe-form').once( function() {
         if (autocomplete_settings[$(this).attr('id')].multiple === true) {
-          new Drupal.autocomplete_deluxe.MultipleWidget(this, autocomplete_settings[$(this).attr('id')]);
+          new Backdrop.autocomplete_deluxe.MultipleWidget(this, autocomplete_settings[$(this).attr('id')]);
         } else {
-          new Drupal.autocomplete_deluxe.SingleWidget(autocomplete_settings[$(this).attr('id')]);
+          new Backdrop.autocomplete_deluxe.SingleWidget(autocomplete_settings[$(this).attr('id')]);
         }
       });
     }
@@ -85,7 +85,7 @@
   /**
    * Unescapes the given string.
    */
-  Drupal.autocomplete_deluxe.unescape = function (input) {
+  Backdrop.autocomplete_deluxe.unescape = function (input) {
     // Unescaping is done via a textarea, since the text inside of it is never
     // executed. This method also allows us to support older browsers like
     // IE 9 and below.
@@ -102,32 +102,32 @@
    * If there is no result this label will be shown.
    * @type {{label: string, value: string}}
    */
-  Drupal.autocomplete_deluxe.empty =  {label: '- ' + Drupal.t('None') + ' -', value: "" };
+  Backdrop.autocomplete_deluxe.empty =  {label: '- ' + Backdrop.t('None') + ' -', value: "" };
 
   /**
-   * EscapeRegex function from jquery autocomplete, is not included in drupal.
+   * EscapeRegex function from jquery autocomplete, is not included in backdrop.
    */
-  Drupal.autocomplete_deluxe.escapeRegex = function(value) {
+  Backdrop.autocomplete_deluxe.escapeRegex = function(value) {
     return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/gi, "\\$&");
   };
 
   /**
-   * Filter function from jquery autocomplete, is not included in drupal.
+   * Filter function from jquery autocomplete, is not included in backdrop.
    */
-  Drupal.autocomplete_deluxe.filter = function(array, term) {
-    var matcher = new RegExp(Drupal.autocomplete_deluxe.escapeRegex(term), "i");
+  Backdrop.autocomplete_deluxe.filter = function(array, term) {
+    var matcher = new RegExp(Backdrop.autocomplete_deluxe.escapeRegex(term), "i");
     return $.grep(array, function(value) {
       return matcher.test(value.label || value.value || value);
     });
   };
 
-  Drupal.autocomplete_deluxe.Widget = function() {
+  Backdrop.autocomplete_deluxe.Widget = function() {
   };
 
   /**
    * Url for the callback.
    */
-  Drupal.autocomplete_deluxe.Widget.prototype.uri = null;
+  Backdrop.autocomplete_deluxe.Widget.prototype.uri = null;
 
   /**
    * Allows widgets to filter terms.
@@ -136,11 +136,11 @@
    * @return {Boolean}
    *   True if the term should be accepted.
    */
-  Drupal.autocomplete_deluxe.Widget.prototype.acceptTerm = function(term) {
+  Backdrop.autocomplete_deluxe.Widget.prototype.acceptTerm = function(term) {
     return true;
   };
 
-  Drupal.autocomplete_deluxe.Widget.prototype.init = function(settings) {
+  Backdrop.autocomplete_deluxe.Widget.prototype.init = function(settings) {
     if(navigator.appVersion.indexOf("MSIE 6.") != -1) {
       return;
     }
@@ -153,7 +153,7 @@
     this.required = settings.required;
     this.limit = settings.limit;
     this.synonyms = typeof settings.use_synonyms == 'undefined' ? false : settings.use_synonyms;
-    this.not_found_message = typeof settings.use_synonyms == 'undefined' ? Drupal.t("The term '@term' will be added.") : settings.not_found_message;
+    this.not_found_message = typeof settings.use_synonyms == 'undefined' ? Backdrop.t("The term '@term' will be added.") : settings.not_found_message;
 
     this.wrapper = '""';
 
@@ -185,7 +185,7 @@
       }
       if ($.isEmptyObject(result)) {
         result.push({
-          label: Drupal.t(self.not_found_message, {'@term' : term}),
+          label: Backdrop.t(self.not_found_message, {'@term' : term}),
           value: term,
           newTerm: true
         });
@@ -246,7 +246,7 @@
     $.ui.autocomplete.prototype._renderItem = function( ul, item) {
       var t = item.label;
       if (this.term != "") {
-        var escapedValue = Drupal.autocomplete_deluxe.escapeRegex( this.term );
+        var escapedValue = Backdrop.autocomplete_deluxe.escapeRegex( this.term );
         var re = new RegExp('()*""' + escapedValue + '""|' + escapedValue + '()*', 'gi');
         var t = item.label.replace(re,"<span class='autocomplete-deluxe-highlight-char'>$&</span>");
       }
@@ -258,7 +258,7 @@
     };
   };
 
-  Drupal.autocomplete_deluxe.Widget.prototype.generateValues = function(data) {
+  Backdrop.autocomplete_deluxe.Widget.prototype.generateValues = function(data) {
     var result = new Array();
     for (var index in data) {
       result.push(data[index]);
@@ -269,15 +269,15 @@
   /**
    * Generates a single selecting widget.
    */
-  Drupal.autocomplete_deluxe.SingleWidget = function(settings) {
+  Backdrop.autocomplete_deluxe.SingleWidget = function(settings) {
     this.init(settings);
     this.setup();
     this.jqObject.addClass('autocomplete-deluxe-form-single');
   };
 
-  Drupal.autocomplete_deluxe.SingleWidget.prototype = new Drupal.autocomplete_deluxe.Widget();
+  Backdrop.autocomplete_deluxe.SingleWidget.prototype = new Backdrop.autocomplete_deluxe.Widget();
 
-  Drupal.autocomplete_deluxe.SingleWidget.prototype.setup = function() {
+  Backdrop.autocomplete_deluxe.SingleWidget.prototype.setup = function() {
     var jqObject = this.jqObject;
     var parent = jqObject.parent();
 
@@ -293,21 +293,21 @@
   /**
    * Creates a multiple selecting widget.
    */
-  Drupal.autocomplete_deluxe.MultipleWidget = function(input, settings) {
+  Backdrop.autocomplete_deluxe.MultipleWidget = function(input, settings) {
     this.init(settings);
     this.setup();
   };
 
-  Drupal.autocomplete_deluxe.MultipleWidget.prototype = new Drupal.autocomplete_deluxe.Widget();
-  Drupal.autocomplete_deluxe.MultipleWidget.prototype.items = new Object();
+  Backdrop.autocomplete_deluxe.MultipleWidget.prototype = new Backdrop.autocomplete_deluxe.Widget();
+  Backdrop.autocomplete_deluxe.MultipleWidget.prototype.items = new Object();
 
 
-  Drupal.autocomplete_deluxe.MultipleWidget.prototype.acceptTerm = function(term) {
+  Backdrop.autocomplete_deluxe.MultipleWidget.prototype.acceptTerm = function(term) {
     // Accept only terms, that are not in our items list.
     return !(term in this.items);
   };
 
-  Drupal.autocomplete_deluxe.MultipleWidget.Item = function (widget, item) {
+  Backdrop.autocomplete_deluxe.MultipleWidget.Item = function (widget, item) {
     if (item.newTerm === true) {
       item.label = item.value;
     }
@@ -330,16 +330,16 @@
     });
   };
 
-  Drupal.autocomplete_deluxe.MultipleWidget.Item.prototype.remove = function() {
+  Backdrop.autocomplete_deluxe.MultipleWidget.Item.prototype.remove = function() {
     this.element.remove();
     var values = this.widget.valueForm.val();
-    var escapedValue = Drupal.autocomplete_deluxe.escapeRegex( this.item.value );
+    var escapedValue = Backdrop.autocomplete_deluxe.escapeRegex( this.item.value );
     var regex = new RegExp('()*""' + escapedValue + '""()*', 'gi');
     this.widget.valueForm.val(values.replace(regex, ''));
     delete this.widget.items[this.value];
   };
 
-  Drupal.autocomplete_deluxe.MultipleWidget.prototype.setup = function() {
+  Backdrop.autocomplete_deluxe.MultipleWidget.prototype.setup = function() {
     var jqObject = this.jqObject;
     var parent = jqObject.parents('.autocomplete-deluxe-container');
     var value_container = parent.next();
@@ -390,7 +390,7 @@
           label : label,
           value : value
         };
-        var item = new Drupal.autocomplete_deluxe.MultipleWidget.Item(self, item);
+        var item = new Backdrop.autocomplete_deluxe.MultipleWidget.Item(self, item);
         item.element.insertBefore(jqObject);
         items[item.value] = item;
       }
@@ -402,7 +402,7 @@
 
     // Adds a value to the list.
     this.addValue = function(ui_item) {
-      var item = new Drupal.autocomplete_deluxe.MultipleWidget.Item(self, ui_item);
+      var item = new Backdrop.autocomplete_deluxe.MultipleWidget.Item(self, ui_item);
       item.element.insertBefore(jqObject);
       items[ui_item.value] = item;
       var new_value = ' ' + self.wrapper + ui_item.value + self.wrapper;
@@ -418,11 +418,11 @@
 
     jqObject.bind("autocompleteselect", function(event, ui) {
       // JQuery ui autocomplete needs the terms escaped, otherwise it would be
-      // open to XSS issues. Drupal.autocomplete.Item also escapes on rendering
+      // open to XSS issues. Backdrop.autocomplete.Item also escapes on rendering
       // the DOM elements. Thus we have to unescape the label here before adding
       // the new item.
       var item = ui.item;
-      item.label = Drupal.autocomplete_deluxe.unescape(item.label);
+      item.label = Backdrop.autocomplete_deluxe.unescape(item.label);
       self.addValue(item);
       jqObject.width(25);
       // Return false to prevent setting the last term as value for the jqObject.

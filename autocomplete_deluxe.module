@@ -41,12 +41,12 @@ function autocomplete_deluxe_taxonomy_callback($field_name, $tags_typed = '', $l
 
   // Part of the criteria for the query come from the field's own settings.
   $vids = array();
-  $vocabularies = taxonomy_vocabulary_get_names();
+  $vocabularies = taxonomy_vocabulary_load_multiple(FALSE);
   foreach ($field['settings']['allowed_values'] as $tree) {
     // If the content taxonomy setting content_taxonomy_ignore_in_suggestions
     // is set, then the vocabulary is ignored.
     if (empty($tree['content_taxonomy_ignore_in_suggestions'])) {
-      $vids[] = $vocabularies[$tree['vocabulary']]->vid;
+      $vids[] = $vocabularies[$tree['vocabulary']]->machine_name;
     }
   }
 
@@ -66,7 +66,7 @@ function autocomplete_deluxe_taxonomy_callback($field_name, $tags_typed = '', $l
     // Select rows that match by term name.
     $query
       ->fields('t', array('tid', 'name'))
-      ->condition('t.vid', $vids);
+      ->condition('t.vocabulary', $vids);
 
     // Clone query, because we need the current state for the "middle" query.
     $middle_query = clone $query;
@@ -126,7 +126,7 @@ function autocomplete_deluxe_taxonomy_callback($field_name, $tags_typed = '', $l
   else {
     $query
       ->fields('t', array('tid', 'name'))
-      ->condition('t.vid', $vids);
+      ->condition('t.vocabulary', $vids);
 
     if (isset($limit) && $limit > 0) {
       $query->range(0, $limit);
@@ -158,7 +158,7 @@ function autocomplete_deluxe_allowed_terms($field) {
   $options = array();
   foreach ($field['settings']['allowed_values'] as $tree) {
     if ($vocabulary = taxonomy_vocabulary_machine_name_load($tree['vocabulary'])) {
-      if ($terms = taxonomy_get_tree($vocabulary->vid, $tree['parent'])) {
+      if ($terms = taxonomy_get_tree($vocabulary->machine_name, $tree['parent'])) {
         foreach ($terms as $term) {
           $options[$term->name] = $term->name;
         }
@@ -176,25 +176,28 @@ function autocomplete_deluxe_field_widget_settings_form($field, $instance) {
   $settings = $widget['settings'];
 
   $form['size'] = array(
-    '#type' => 'textfield',
+    '#type' => 'number',
     '#title' => t('Size of textfield'),
     '#default_value' => isset($settings['size']) ? $settings['size'] : 6,
-    '#element_validate' => array('element_validate_integer_positive'),
+    '#min' => 1,
+    '#max' => 255,
     '#required' => TRUE,
   );
   $form['limit'] = array(
-    '#type' => 'textfield',
+    '#type' => 'number',
     '#title' => t('Limit of the output.'),
     '#description' => t('If set to zero no limit will be used'),
     '#default_value' => isset($settings['limit']) ? $settings['limit'] : 10,
-    '#element_validate' => array('element_validate_integer'),
+    '#min' => 0,
+    '#max' => 255,
   );
   $form['min_length'] = array(
-    '#type' => 'textfield',
+    '#type' => 'number',
     '#title' => t('Minimum length.'),
     '#description' => t('The minimum length of characters to enter to open the suggestion list.'),
     '#default_value' => isset($settings['min_length']) ? $settings['min_length'] : 0,
-    '#element_validate' => array('element_validate_integer'),
+    '#min' => 0,
+    '#max' => 10,
   );
   $form['delimiter'] = array(
     '#type' => 'textfield',
@@ -238,7 +241,7 @@ function autocomplete_deluxe_taxonomy_implode_tags($tags, $vid = NULL) {
   $typed_tags = array();
   foreach ($tags as $tag) {
     // Extract terms belonging to the vocabulary in question.
-    if (!isset($vid) || $tag->vid == $vid) {
+    if (!isset($vid) || $tag->vocabulary == $vid) {
       // Make sure we have a completed loaded taxonomy term.
       if (isset($tag->name)) {
         // Commas and quotes in tag names are special cases, so encode 'em.

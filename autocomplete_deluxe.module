@@ -41,12 +41,12 @@ function autocomplete_deluxe_taxonomy_callback($field_name, $tags_typed = '', $l
 
   // Part of the criteria for the query come from the field's own settings.
   $vids = array();
-  $vocabularies = taxonomy_vocabulary_get_names();
+  $vocabularies = taxonomy_vocabulary_load_multiple(FALSE);
   foreach ($field['settings']['allowed_values'] as $tree) {
     // If the content taxonomy setting content_taxonomy_ignore_in_suggestions
     // is set, then the vocabulary is ignored.
     if (empty($tree['content_taxonomy_ignore_in_suggestions'])) {
-      $vids[] = $vocabularies[$tree['vocabulary']]->vid;
+      $vids[] = $vocabularies[$tree['vocabulary']]->machine_name;
     }
   }
 
@@ -66,7 +66,7 @@ function autocomplete_deluxe_taxonomy_callback($field_name, $tags_typed = '', $l
     // Select rows that match by term name.
     $query
       ->fields('t', array('tid', 'name'))
-      ->condition('t.vid', $vids);
+      ->condition('t.vocabulary', $vids);
 
     // Clone query, because we need the current state for the "middle" query.
     $middle_query = clone $query;
@@ -126,7 +126,7 @@ function autocomplete_deluxe_taxonomy_callback($field_name, $tags_typed = '', $l
   else {
     $query
       ->fields('t', array('tid', 'name'))
-      ->condition('t.vid', $vids);
+      ->condition('t.vocabulary', $vids);
 
     if (isset($limit) && $limit > 0) {
       $query->range(0, $limit);
